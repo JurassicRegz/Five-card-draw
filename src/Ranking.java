@@ -1,206 +1,189 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Ranking {
-    private String suit, handRank;
-    private int flushCheck;
-    private ArrayList<Card> HandCards;
-    private boolean chk = true;
-
+    private String handRank;
+    private ArrayList<Card> handCards;
+    private boolean rankNotFound, flushCheck;
 
     public Ranking() {
         this.handRank = "";
     }
 
-    public void printRank(){
-        System.out.println(handRank);
+    /**
+     * 
+     * @param hand ArrayList of Card objects which represents a player's hand.
+     * @return String which represents the strength of a player's hand.
+     */
+    public String evaluateHand(ArrayList<Card> hand) {
+        this.handCards = hand;
+        return this.evaluateRank();
     }
 
-    public void evaluateHand(ArrayList<Card> hand) {
-        this.HandCards = hand;
-        sortHandCards();
-        getRank();
-    }
+    /**
+     * method to evaluate an Arraylist of Card objects to determine it's strength.
+     * 
+     * @return String which represents the strength of a player's hand.
+     */
+    private String evaluateRank() {
+        this.handRank = "";
+        this.rankNotFound = true;
+        int iterator = 0;
+        String comparisonSuit = "";
+        this.flushCheck = true;
 
-    public void sortHandCards() {
-        ArrayList<Card> unsortCards = new ArrayList<>();
-        for (Card c : this.HandCards) {
-            unsortCards.add(c);
-        }
-        this.HandCards = new ArrayList<>();
-
-        //Sorting The Card Values
-        int[] arr = new int[5];
-        for (int i = 0; i < 5; i++) {
-            arr[i] = unsortCards.get(i).getCardVal();
-        }
-        Arrays.sort(arr);
-
-        //Copying The Sorted Cards To The Hand
-        Card x = null;
-        for (int a : arr) {
-            for (Card c : unsortCards) {
-                if (a == c.getCardVal()) {
-                    x = c;
-                    break;
-                }
-            }
-            this.HandCards.add(x);
-            unsortCards.remove(x);
-        }
-    }
-
-    private void getRank() {
-        int i = 0;
-        flushCheck = 1;
-        for (Card c : HandCards) {
-            if (i == 0) {
-                suit = c.getCardSuit();
-            } else if (suit.equals(c.getCardSuit())) {
+        ////Check if cards follow a type of flush rank////
+        for (Card card : this.handCards) {
+            if (iterator == 0) {
+                comparisonSuit = card.getCardSuit();
+            } else if (comparisonSuit.equals(card.getCardSuit())) {
                 continue;
             } else {
-                flushCheck = 0;
+                this.flushCheck = false;
                 break;
             }
-            i++;
+            iterator++;
         }
 
-
-        if (flushCheck != 0) {
-            if (chk) {
+        ////Follows a trickle down style to match a rank to a player's hand////
+        if (this.flushCheck) {
+            if (rankNotFound) {
                 checkStraightFlush();
-                handRank = "Straight Flush";
+                this.handRank = "Straight Flush";
             }
-            if (chk) {
+            if (rankNotFound) {
                 checkFlush();
-                handRank = "Flush";
+                this.handRank = "Flush";
             }
 
         } else {
-            if (chk) {
+            if (this.rankNotFound) {
                 checkFourOfAKind();
-                handRank = "Four of a Kind";
+                this.handRank = "Four of a Kind";
             }
-            if (chk) {
+            if (this.rankNotFound) {
                 checkFullHouse();
-                handRank = "Full House";
+                this.handRank = "Full House";
             }
-            if (chk) {
+            if (this.rankNotFound) {
                 checkStraight();
-                handRank = "Straight";
+                this.handRank = "Straight";
             }
-            if (chk) {
+            if (this.rankNotFound) {
                 checkThreeOfAKind();
-                handRank = "Three of a Kind";
+                this.handRank = "Three of a Kind";
             }
-            if (chk) {
+            if (this.rankNotFound) {
                 checkTwoPair();
-                handRank = "Two Pair";
+                this.handRank = "Two Pair";
             }
-            if (chk) {
+            if (this.rankNotFound) {
                 checkOnePair();
-                handRank = "One Pair";
+                this.handRank = "One Pair";
             }
-            if (chk) {
+            if (this.rankNotFound) {
                 HighCard();
-                handRank = "High Card";
+                this.handRank = "High Card";
             }
         }
+
+        return this.handRank;
     }
 
+    ////////////Various methods to check hand ranks///////////
+
     public void checkStraightFlush() {
-        //Checking For Straight Flush with A in 1st
-        if ((HandCards.get(0).getCardVal() + 3) == HandCards.get(3).getCardVal() &&
-                HandCards.get(4).getCardVal() == 14 &&
-                HandCards.get(0).getCardVal() == 2) {
-            chk = false;
+        if ((this.handCards.get(0).getCardVal() + 3) == this.handCards.get(3).getCardVal() &&
+                this.handCards.get(4).getCardVal() == 14 &&
+                this.handCards.get(0).getCardVal() == 2) {
+            this.rankNotFound = false;
         }
-        //Checking Straight Flush For Other values
-        else if ((HandCards.get(0).getCardVal() + 4) == HandCards.get(4).getCardVal()) {
-            chk = false;
+        else if ((this.handCards.get(0).getCardVal() + 4) == this.handCards.get(4).getCardVal()) {
+            this.rankNotFound = false;
         }
     }
 
     public void checkFourOfAKind() {
-        if (HandCards.get(0).getCardVal() == HandCards.get(1).getCardVal() &&
-                HandCards.get(1).getCardVal() == HandCards.get(2).getCardVal() &&
-                HandCards.get(2).getCardVal() == HandCards.get(3).getCardVal() ||
-                HandCards.get(1).getCardVal() == HandCards.get(2).getCardVal() &&
-                        HandCards.get(2).getCardVal() == HandCards.get(3).getCardVal() &&
-                        HandCards.get(3).getCardVal() == HandCards.get(4).getCardVal()) {
+        if (this.handCards.get(0).getCardVal() == this.handCards.get(1).getCardVal() &&
+                this.handCards.get(1).getCardVal() == this.handCards.get(2).getCardVal() &&
+                this.handCards.get(2).getCardVal() == this.handCards.get(3).getCardVal() ||
+                this.handCards.get(1).getCardVal() == this.handCards.get(2).getCardVal() &&
+                        this.handCards.get(2).getCardVal() == this.handCards.get(3).getCardVal() &&
+                        this.handCards.get(3).getCardVal() == this.handCards.get(4).getCardVal()) {
 
-            chk = false;
+            this.rankNotFound = false;
         }
     }
 
     public void checkFullHouse() {
-        if (HandCards.get(0).getCardVal() == HandCards.get(1).getCardVal() &&
-                HandCards.get(1).getCardVal() == HandCards.get(2).getCardVal() &&
-                HandCards.get(3).getCardVal() == HandCards.get(4).getCardVal() ||
-                HandCards.get(0).getCardVal() == HandCards.get(1).getCardVal() &&
-                        HandCards.get(2).getCardVal() == HandCards.get(3).getCardVal() &&
-                        HandCards.get(3).getCardVal() == HandCards.get(4).getCardVal()) {
-            chk = false;
+        if (this.handCards.get(0).getCardVal() == this.handCards.get(1).getCardVal() &&
+                this.handCards.get(1).getCardVal() == this.handCards.get(2).getCardVal() &&
+                this.handCards.get(3).getCardVal() == this.handCards.get(4).getCardVal() ||
+                this.handCards.get(0).getCardVal() == this.handCards.get(1).getCardVal() &&
+                        this.handCards.get(2).getCardVal() == this.handCards.get(3).getCardVal() &&
+                        this.handCards.get(3).getCardVal() == this.handCards.get(4).getCardVal()) {
+            this.rankNotFound = false;
         }
     }
 
     public void checkFlush() {
-        chk = false;
+        this.rankNotFound = false;
     }
 
     public void checkStraight() {
-        if ((HandCards.get(0).getCardVal() + 1) == HandCards.get(1).getCardVal() &&
-                (HandCards.get(1).getCardVal() + 1) == HandCards.get(2).getCardVal() &&
-                (HandCards.get(2).getCardVal() + 1) == HandCards.get(3).getCardVal() &&
-                (HandCards.get(3).getCardVal() + 1) == HandCards.get(4).getCardVal() ||
-                HandCards.get(4).getCardVal() == 14 &&
-                        HandCards.get(0).getCardVal() == 2 &&
-                        (HandCards.get(0).getCardVal() + 1) == HandCards.get(1).getCardVal() &&
-                        (HandCards.get(1).getCardVal() + 1) == HandCards.get(2).getCardVal() &&
-                        (HandCards.get(2).getCardVal() + 1) == HandCards.get(3).getCardVal()) {
+        if ((this.handCards.get(0).getCardVal() + 1) == this.handCards.get(1).getCardVal() &&
+                (this.handCards.get(1).getCardVal() + 1) == this.handCards.get(2).getCardVal() &&
+                (this.handCards.get(2).getCardVal() + 1) == this.handCards.get(3).getCardVal() &&
+                (this.handCards.get(3).getCardVal() + 1) == this.handCards.get(4).getCardVal() ||
+                this.handCards.get(4).getCardVal() == 14 &&
+                        this.handCards.get(0).getCardVal() == 2 &&
+                        (this.handCards.get(0).getCardVal() + 1) == this.handCards.get(1).getCardVal() &&
+                        (this.handCards.get(1).getCardVal() + 1) == this.handCards.get(2).getCardVal() &&
+                        (this.handCards.get(2).getCardVal() + 1) == this.handCards.get(3).getCardVal()) {
 
-            chk = false;
+            this.rankNotFound = false;
         }
     }
 
     public void checkThreeOfAKind() {
-        if (HandCards.get(0).getCardVal() == HandCards.get(1).getCardVal() &&
-                HandCards.get(1).getCardVal() == HandCards.get(2).getCardVal() ||
-                HandCards.get(1).getCardVal() == HandCards.get(2).getCardVal() &&
-                        HandCards.get(2).getCardVal() == HandCards.get(3).getCardVal() ||
-                HandCards.get(2).getCardVal() == HandCards.get(3).getCardVal() &&
-                        HandCards.get(3).getCardVal() == HandCards.get(4).getCardVal()) {
-            chk = false;
+        if (this.handCards.get(0).getCardVal() == this.handCards.get(1).getCardVal() &&
+                this.handCards.get(1).getCardVal() == this.handCards.get(2).getCardVal() ||
+                this.handCards.get(1).getCardVal() == this.handCards.get(2).getCardVal() &&
+                        this.handCards.get(2).getCardVal() == this.handCards.get(3).getCardVal()
+                ||
+                this.handCards.get(2).getCardVal() == this.handCards.get(3).getCardVal() &&
+                        this.handCards.get(3).getCardVal() == this.handCards.get(4).getCardVal()) {
+            this.rankNotFound = false;
         }
     }
 
     public void checkTwoPair() {
-        if (HandCards.get(0).getCardVal() == HandCards.get(1).getCardVal() &&
-                HandCards.get(2).getCardVal() == HandCards.get(3).getCardVal() ||
-                HandCards.get(1).getCardVal() == HandCards.get(2).getCardVal() &&
-                        HandCards.get(3).getCardVal() == HandCards.get(4).getCardVal() ||
-                HandCards.get(0).getCardVal() == HandCards.get(1).getCardVal() &&
-                        HandCards.get(3).getCardVal() == HandCards.get(4).getCardVal()) {
-            chk = false;
+        if (this.handCards.get(0).getCardVal() == this.handCards.get(1).getCardVal() &&
+                this.handCards.get(2).getCardVal() == this.handCards.get(3).getCardVal() ||
+                this.handCards.get(1).getCardVal() == this.handCards.get(2).getCardVal() &&
+                        this.handCards.get(3).getCardVal() == this.handCards.get(4).getCardVal()
+                ||
+                this.handCards.get(0).getCardVal() == this.handCards.get(1).getCardVal() &&
+                        this.handCards.get(3).getCardVal() == this.handCards.get(4).getCardVal()) {
+            this.rankNotFound = false;
         }
     }
 
     public void checkOnePair() {
-        if (HandCards.get(0).getCardVal() == HandCards.get(1).getCardVal()) {
-            chk = false;
+        if (this.handCards.get(0).getCardVal() == this.handCards.get(1).getCardVal()) {
+            this.rankNotFound = false;
         }
-        if (HandCards.get(1).getCardVal() == HandCards.get(2).getCardVal()) {
-            chk = false;
+        if (this.handCards.get(1).getCardVal() == this.handCards.get(2).getCardVal()) {
+            this.rankNotFound = false;
         }
-        if (HandCards.get(2).getCardVal() == HandCards.get(3).getCardVal()) {
-            chk = false;
+        if (this.handCards.get(2).getCardVal() == this.handCards.get(3).getCardVal()) {
+            this.rankNotFound = false;
         }
-        if (HandCards.get(3).getCardVal() == HandCards.get(4).getCardVal()) {
-            chk = false;
+        if (this.handCards.get(3).getCardVal() == this.handCards.get(4).getCardVal()) {
+            this.rankNotFound = false;
         }
     }
 
     public void HighCard() {
-        chk = false;
+        this.rankNotFound = false;
     }
 }

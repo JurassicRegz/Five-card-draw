@@ -3,25 +3,47 @@ public class Card {
     private String suit;
     private int value;
 
-    public Card(String rank, String suit, int val){
+    /**
+     * Constructor to instantiate a card object. 
+     * 
+     * @param rank string representing the rank of a card.
+     * @param suit string representing the suit of a card.
+     * @param val int representing the value associated with the card's rank.
+     */
+    public Card(String rank, String suit, int val) {
         this.rank = rank;
         this.suit = suit;
         this.value = val;
     }
 
-    public void printCard(){
+    /**
+     * print the card's rank and suit.
+     */
+    public void printCard() {
         System.out.print(this.rank + this.suit + " ");
     }
 
-    public String getCardRank(){
+    /**
+     * 
+     * @return private rank member of a card object.
+     */
+    public String getCardRank() {
         return this.rank;
     }
 
-    public String getCardSuit(){
+    /**
+     * 
+     * @return private suit member of card object.
+     */
+    public String getCardSuit() {
         return this.suit;
     }
 
-    public int getCardVal(){
+    /**
+     * 
+     * @return private value member of card object.
+     */
+    public int getCardVal() {
         return this.value;
     }
 }
