@@ -16,6 +16,7 @@ public class PlayerTest {
         assertEquals(5, testPlayer.getPlayerHand().size());
     }
 
+    @Test
     public void testPlayerEvaluate(){
         Player testPlayer = new Player(5);
         testPlayer.drawCards();

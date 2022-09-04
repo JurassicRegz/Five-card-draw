@@ -12,10 +12,18 @@ which will deal and evaluate poker hands for a simplified version of the five-ca
 ## Development
 
 This program is developed using Java, OpenJDK 11. <br />
-Testing is done using JUnit 4.13.
+Testing is done using JUnit 4.13. <br />
+Program should be run in a bash terminal.
 
+## Installation
+ Download the Zip containing the code on the repo or clone the repository. <br />
+ Once downloaded or cloned, open up the folder directory in your bash terminal and run:
+
+ ``` bash
+ sudo apt update && sudo apt install openjdk-11-jdk-headless -y
+ ```
 ## Usage/Examples
-In your linux terminal, run the shell script to compile and execute the program.
+In your bash terminal, run the shell script to compile and execute the program.
 
 ```bash
 ./run.sh
